@@ -1,17 +1,18 @@
 # ============================================================
 # .github/workflows/ci-python-mkdocs.yml (Continuous Integration)
 # ============================================================
+# Variant: org-mkdocs
 # SOURCE: https://github.com/denisecase/templates
-#
+# OBS: Fetches org-wide MkDocs base config at run time (network dependency).
+# REQ: The referenced raw URL must remain public/accessible to GitHub Actions.
+# WHY: Keeps documentation theming/config consistent across org repositories.
+
 # WHY-FILE: Validate repository hygiene, python, and documentation builds.
 # REQ: Any check that can be run locally MUST be available locally via pre-commit.
 # REQ: CI MUST NOT introduce arbitrary rules that are not reproducible locally.
 # OBS: CI validates only; it never edits files or deploys docs.
 
 name: CI (Python + MkDocs)
-
-# WHY: Validate code, docs, and repo metadata on PRs and pushes.
-# OBS: This workflow validates only; it never deploys.
 
 on:
   push:
@@ -93,7 +94,7 @@ jobs:
       - name: C1) Run pytest with coverage
         run: |
           if [ -d "tests" ] && [ -n "$(find tests -name 'test_*.py' -o -name '*_test.py')" ]; then
-            uv run pytest --verbose --cov=src --cov-report=term-missing --cov-report=xml
+            uv run pytest --cov-report=xml
           else
             echo "No tests found - creating empty coverage report"
             echo "## No Tests Found" >> $GITHUB_STEP_SUMMARY
@@ -125,6 +126,14 @@ jobs:
       # ============================================================
       # === DEPLOY: Build only, don't deploy yet ===
       # ============================================================
+
+      - name: D0) Fetch organization MkDocs base config
+        run: |
+          if [ -f "mkdocs.yml" ] || [ -f "mkdocs.yaml" ]; then
+            curl -o mkdocs.base.yaml https://raw.githubusercontent.com/toy-gpt/.github/refs/heads/main/docs-theme/mkdocs.base.yaml
+          else
+            echo "No mkdocs config found; skipping remote fetch."
+          fi
 
       - name: D1) Build docs (mkdocs --strict)
         id: build-docs
