@@ -1,16 +1,17 @@
 """d_train.py - Training loop module.
 
 Trains the SimpleNextTokenModel on a small token corpus
-using a bigram context (previous token, current token).
+using a bigram context (current token → next token).
 
 Responsibilities:
-- Create ((previous_token, current_token) -> next_token) training pairs from the corpus
+- Create (current_token -> next_token) training pairs from the corpus
 - Run a basic gradient-descent training loop
 - Track loss and accuracy per epoch
 - Write a CSV log of training progress
 - Write inspectable training artifacts (vocabulary, weights, embeddings, meta)
 
 Concepts:
+- epoch: one complete pass through all training pairs
 - softmax: converts raw scores into probabilities (so predictions sum to 1)
 - cross-entropy loss: measures how well predicted probabilities match the correct token
 - gradient descent: iterative weight updates to minimize loss
@@ -20,7 +21,7 @@ Concepts:
 Notes:
 - This is intentionally simple: no deep learning framework, no Transformer.
 - The model is a softmax regression classifier over bigram contexts.
-- Training updates the weight rows corresponding to the observed bigram context.
+- Training updates the weight row corresponding to the observed current token.
 - token_embeddings.csv is a visualization-friendly projection for levels 100-400;
   in later repos (500+), embeddings become a first-class learned table.
 """
@@ -45,19 +46,18 @@ from toy_gpt_train.math_training import argmax
 from toy_gpt_train_animals.a_tokenizer import DEFAULT_CORPUS_PATH, SimpleTokenizer
 from toy_gpt_train_animals.b_vocab import Vocabulary
 
-type BigramContext = tuple[int, int]
-type BigramPair = tuple[BigramContext, int]
+type BigramPair = tuple[int, int]
 
 LOG: logging.Logger = get_logger("TRAIN", level="INFO")
-
-BASE_DIR: Final[Path] = Path(__file__).resolve().parents[2]
-OUTPUTS_DIR: Final[Path] = BASE_DIR / "outputs"
-TRAIN_LOG_PATH: Final[Path] = OUTPUTS_DIR / "train_log.csv"
 
 
 def main() -> None:
     """Run a simple training demo end-to-end."""
     log_header(LOG, "Training Demo: Next-Token Softmax Regression")
+
+    base_dir: Final[Path] = Path(__file__).resolve().parents[2]
+    outputs_dir: Final[Path] = base_dir / "outputs"
+    train_log_path: Final[Path] = outputs_dir / "train_log.csv"
 
     # Step 1: Load and tokenize the corpus.
     tokenizer: SimpleTokenizer = SimpleTokenizer(corpus_path=DEFAULT_CORPUS_PATH)
@@ -98,11 +98,11 @@ def main() -> None:
     )
 
     # Step 7: Save training metrics for analysis.
-    write_training_log(TRAIN_LOG_PATH, history)
+    write_training_log(train_log_path, history)
 
     # Step 7b: Write inspectable artifacts for downstream use.
     write_artifacts(
-        base_dir=BASE_DIR,
+        base_dir=base_dir,
         corpus_path=DEFAULT_CORPUS_PATH,
         vocab=vocab,
         model=model,
@@ -113,16 +113,14 @@ def main() -> None:
     )
 
     # Step 8: Qualitative check - what does the model predict after first token?
-    previous_token: str = tokens[0]
-    current_token: str = tokens[1]
-    previous_id: int | None = vocab.get_token_id(previous_token)
+    current_token: str = tokens[0]
     current_id: int | None = vocab.get_token_id(current_token)
-    if previous_id is not None and current_id is not None:
-        probs: list[float] = model.forward(previous_id, current_id)
+    if current_id is not None:
+        probs: list[float] = model.forward(current_id)
         best_next_id: int = argmax(probs)
         best_next_tok: str | None = vocab.get_id_token(best_next_id)
         LOG.info(
-            f"After training, most likely next token after {previous_token!r}|{current_token!r} "
+            f"After training, most likely next token after {current_token!r} "
             f"is {best_next_tok!r} (ID: {best_next_id})."
         )
 

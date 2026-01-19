@@ -32,6 +32,7 @@ from toy_gpt_train.e_infer import (
     require_artifacts,
     top_k,
 )
+from toy_gpt_train.prompts import parse_args
 
 JsonScalar = str | int | float | bool | None
 JsonValue = JsonScalar | list["JsonValue"] | dict[str, "JsonValue"]
@@ -40,60 +41,28 @@ JsonObject = dict[str, JsonValue]
 LOG: logging.Logger = get_logger("INFER", level="INFO")
 
 
-BASE_DIR: Final[Path] = Path(__file__).resolve().parents[2]
-ARTIFACTS_DIR: Final[Path] = BASE_DIR / "artifacts"
-META_PATH: Final[Path] = ARTIFACTS_DIR / "00_meta.json"
-VOCAB_PATH: Final[Path] = ARTIFACTS_DIR / "01_vocabulary.csv"
-WEIGHTS_PATH: Final[Path] = ARTIFACTS_DIR / "02_model_weights.csv"
-
-
-def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Toy GPT inference from saved artifacts."
-    )
-    parser.add_argument(
-        "--start",
-        dest="start_token",
-        default="",
-        help="Start token for generation. If omitted, uses the first token in the vocabulary.",
-    )
-    parser.add_argument(
-        "--num",
-        dest="num_tokens",
-        type=int,
-        default=10,
-        help="Number of tokens to generate (not counting the start token).",
-    )
-    parser.add_argument(
-        "--topk",
-        dest="topk",
-        type=int,
-        default=3,
-        help="Show top-k next-token probabilities for the start token.",
-    )
-    return parser.parse_args()
-
-
 def main() -> None:
     """Run inference using saved training artifacts."""
     log_header(LOG, "Inference Demo: Load Artifacts and Generate Text")
 
+    base_dir: Final[Path] = Path(__file__).resolve().parents[2]
+    artifacts_dir: Final[Path] = base_dir / "artifacts"
+    meta_path: Final[Path] = artifacts_dir / "00_meta.json"
+    vocab_path: Final[Path] = artifacts_dir / "01_vocabulary.csv"
+    weights_path: Final[Path] = artifacts_dir / "02_model_weights.csv"
     require_artifacts(
-        meta_path=META_PATH,
-        vocab_path=VOCAB_PATH,
-        weights_path=WEIGHTS_PATH,
-        train_hint="uv run python src/toy_gpt_train/d_train.py",
+        meta_path=meta_path,
+        vocab_path=vocab_path,
+        weights_path=weights_path,
+        train_hint="uv run python src/toy_gpt_train_animals/d_train.py",
     )
 
-    meta: JsonObject = load_meta(META_PATH)
-    vocab: ArtifactVocabulary = load_vocabulary_csv(VOCAB_PATH)
+    meta: JsonObject = load_meta(meta_path)
+    vocab: ArtifactVocabulary = load_vocabulary_csv(vocab_path)
 
     v = vocab.vocab_size()
     model: SimpleNextTokenModel = SimpleNextTokenModel(vocab_size=v)
-    model.weights = load_model_weights_csv(
-        WEIGHTS_PATH, vocab_size=v, expected_rows=v * v
-    )
+    model.weights = load_model_weights_csv(weights_path, vocab_size=v, expected_rows=v)
 
     args: argparse.Namespace = parse_args()
 
@@ -112,7 +81,7 @@ def main() -> None:
 
     start_id = vocab.get_token_id(start_token)
     if start_id is not None:
-        probs: list[float] = model.forward(start_id, start_id)
+        probs: list[float] = model.forward(start_id)
         LOG.info(f"Top next-token predictions after {start_token!r}:")
         for tok_id, prob in top_k(probs, k=max(1, args.topk)):
             tok = vocab.get_id_token(tok_id)

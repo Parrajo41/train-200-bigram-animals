@@ -1,18 +1,16 @@
 """c_model.py - Simple model module.
 
-Defines a minimal next-token prediction model for a bigram context
-(uses two tokens in sequence: previous token, current token).
+Defines a minimal next-token prediction model using bigram context.
+  A bigram models P(next | current).
 
 Responsibilities:
 - Represent a simple parameterized model that maps a
-  2-tuple of token IDs (previous token, current token)
-  to a score for each token in the vocabulary.
+  token ID (current token) to a score for each token in the vocabulary.
 - Convert scores into probabilities using softmax.
 - Provide a forward pass (no training in this module).
 
 This model is intentionally simple:
-- one weight table (conceptually a 3D tensor: prev x curr x next,
-  flattened for storage as a 2D matrix)
+- one weight table (2D matrix: current x next)
 - one forward computation
 - no learning here
 
@@ -35,14 +33,14 @@ def main() -> None:
     from toy_gpt_train_animals.a_tokenizer import DEFAULT_CORPUS_PATH, SimpleTokenizer
     from toy_gpt_train_animals.b_vocab import Vocabulary
 
-    log_header(LOG, "Simple Next-Token Model Demo")
+    log_header(LOG, "Simple Next-Token Model Demo (Bigram / Context-1)")
 
     # Step 1: Tokenize input text.
     tokenizer: SimpleTokenizer = SimpleTokenizer(corpus_path=DEFAULT_CORPUS_PATH)
     tokens: list[str] = tokenizer.get_tokens()
 
-    if not tokens:
-        LOG.info("No tokens available for demonstration.")
+    if len(tokens) < 2:
+        LOG.info("Need at least two tokens for bigram demonstration.")
         return
 
     # Step 2: Build vocabulary.
@@ -51,24 +49,19 @@ def main() -> None:
     # Step 3: Initialize model.
     model: SimpleNextTokenModel = SimpleNextTokenModel(vocab_size=vocab.vocab_size())
 
-    # Step 4: Select previous and current tokens.
-    previous_token: str = tokens[0]
-    current_token: str = tokens[1]
-
-    previous_id: int | None = vocab.get_token_id(previous_token)
+    # Step 4: Select current token.
+    current_token: str = tokens[0]
     current_id: int | None = vocab.get_token_id(current_token)
 
-    if previous_id is None or current_id is None:
-        LOG.info("One of the sample tokens was not found in vocabulary.")
+    if current_id is None:
+        LOG.info("Sample token was not found in vocabulary.")
         return
 
     # Step 5: Forward pass (bigram context).
-    probs: list[float] = model.forward(previous_id, current_id)
+    probs: list[float] = model.forward(current_id)
 
     # Step 6: Inspect results.
-    LOG.info(
-        f"Input tokens: {previous_token!r} (ID {previous_id}), {current_token!r} (ID {current_id})"
-    )
+    LOG.info(f"Input token: {current_token!r} (ID {current_id})")
     LOG.info("Output probabilities for next token:")
     for idx, prob in enumerate(probs):
         tok: str | None = vocab.get_id_token(idx)
