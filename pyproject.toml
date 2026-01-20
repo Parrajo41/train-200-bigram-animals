@@ -83,6 +83,11 @@ Repository = "https://github.com/toy-gpt/train-200-bigram-animals"
 # WHY: Dev and docs dependencies are not imported in source code.
 ignore = ["DEP002"]
 
+[tool.deptry.package_module_name_map]
+# WHY: PyPI package names differ from importable module names.
+# CUSTOM: Add project dependencies here as needed.
+"toy-gpt-train-200-bigram" = "toy_gpt_train"
+
 [tool.deptry.per_rule_ignores]
 # CUSTOM: Add self-import package here to avoid false positives.
 DEP001 = ["toy_gpt_train_animals"]

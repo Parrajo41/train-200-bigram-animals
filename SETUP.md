@@ -73,9 +73,10 @@ uv run ruff format .
 uv run ruff check . --fix
 uv run pytest
 
+uv run validate-pyproject pyproject.toml
 uv run pyright
 uv run bandit -c pyproject.toml -r src
-uv run validate-pyproject pyproject.toml
+uv run deptry .
 ```
 
 Save progress frequently (some tools may make changes; **re-run git `add` and `commit`**
